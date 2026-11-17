@@ -1,0 +1,74 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Ausleihe',
+    typeNamePlural: 'Ausleihen',
+    title: { type: #STANDARD, value: 'LoanNo' }
+  }
+}
+annotate entity ZALM_LB_C_Loan with
+{
+  @UI.facet: [
+    {
+      id: 'LoanDetails',
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Ausleihdetails',
+      position: 10
+    }
+  ]
+
+  @UI.hidden: true
+  LoanUuid;
+
+  @UI.hidden: true
+  BookUuid;
+
+  @UI.lineItem: [{ position: 10 },
+  { type: #FOR_ACTION, dataAction: 'returnBook', label: 'Zurückgeben', position: 10 },
+    { type: #FOR_ACTION, dataAction: 'extendLoan', label: 'Verlängern',  position: 20 }]
+  @UI.identification: [{ position: 10 },
+  { type: #FOR_ACTION, dataAction: 'returnBook', label: 'Zurückgeben', position: 10 },
+    { type: #FOR_ACTION, dataAction: 'extendLoan', label: 'Verlängern',  position: 20 }]
+  LoanNo;
+
+  @UI.lineItem: [{ position: 20 }]
+  @UI.identification: [{ position: 20 }]
+  MemberId;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.identification: [{ position: 30 }]
+  LoanDate;
+
+  @UI.lineItem: [{ position: 40 }]
+  @UI.identification: [{ position: 40 }]
+  DueDate;
+
+  @UI.lineItem: [{ position: 50 }]
+  @UI.identification: [{ position: 50 }]
+  ReturnDate;
+
+  @UI.lineItem: [{ position: 60, criticality: 'StatusCriticality', criticalityRepresentation: #WITH_ICON }]
+  @UI.identification: [{ position: 60, criticality: 'StatusCriticality', criticalityRepresentation: #WITH_ICON }]
+  @UI.textArrangement: #TEXT_FIRST
+  StatusId;
+
+  @UI.lineItem: [{ position: 70 }]
+  @UI.identification: [{ position: 70 }]
+  ExtensionCount;
+
+  @UI.lineItem: [{ position: 80 }]
+  @UI.identification: [{ position: 80 }]
+  Note;
+
+  @UI.hidden: true
+  LocalLastChangedAt;
+
+  @UI.hidden: true
+  MemberName;
+
+  @UI.hidden: true
+  StatusText;
+
+  @UI.hidden: true
+  StatusCriticality;
+}

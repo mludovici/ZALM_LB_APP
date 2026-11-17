@@ -1,0 +1,9 @@
+@EndUserText.label: 'Service Definition für Library App'
+define service ZALM_LB_SD_LIBRARY {
+  expose ZALM_LB_C_Book         as Book;
+  expose ZALM_LB_C_Loan         as Loan;
+  expose ZALM_LB_C_Review       as Review;
+  expose ZALM_LB_I_MEMBER       as Member;
+  expose ZALM_LB_I_LoanStatus   as Status;
+  expose ZALM_LB_CE_OpenLibBook as OpenLibBook;
+}

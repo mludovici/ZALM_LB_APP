@@ -1,0 +1,54 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Rezension',
+    typeNamePlural: 'Rezensionen',
+    title: { type: #STANDARD, value: 'Headline' }
+  }
+}
+annotate entity ZALM_LB_C_Review with
+{
+  @UI.facet: [
+    {
+      id: 'ReviewDetails',
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Rezensionsdetails',
+      position: 10
+    }
+  ]
+
+  @UI.hidden: true
+  ReviewUuid;
+
+  @UI.hidden: true
+  BookUuid;
+
+  @UI.lineItem: [{ position: 10 }]
+  @UI.identification: [{ position: 10 }]
+  MemberId;
+
+  @UI.lineItem: [{ position: 20 }]
+  @UI.identification: [{ position: 20 }]
+  Rating;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.identification: [{ position: 30 }]
+  Headline;
+
+  @UI.lineItem: [{ position: 40 }]
+  @UI.identification: [{ position: 40 }]
+  CommentText;
+
+  @UI.lineItem: [{ position: 50 }]
+  @UI.identification: [{ position: 50 }]
+  ReviewDate;
+
+  @UI.hidden: true
+  LocalLastChangedAt;
+
+  @UI.hidden: true
+  MemberName;
+
+  @UI.hidden: true
+  MemberAvatar;
+}

@@ -1,0 +1,38 @@
+projection;
+strict ( 2 );
+use draft;
+use side effects;
+define behavior for ZALM_LB_C_Book alias Book
+{
+  use create;
+  use update;
+  use delete;
+
+  use action Edit;
+  use action Resume;
+  use action Activate;
+  use action Discard;
+  use action Prepare;
+  use action lendBook;
+  use action duplicateBook;
+  use function getLibraryKpis;
+  use association _Loan { create; with draft; }
+  use association _Review { create; with draft; }
+}
+
+define behavior for ZALM_LB_C_Loan alias Loan
+{
+  use update;
+  use delete;
+  use action extendLoan;
+  use action returnBook;
+  use association _Book { with draft; }
+}
+
+define behavior for ZALM_LB_C_Review alias Review
+{
+  use update;
+  use delete;
+
+  use association _Book { with draft; }
+}

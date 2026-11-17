@@ -1,0 +1,152 @@
+managed implementation in class zbp_alm_lb_i_book unique;
+strict ( 2 );
+with draft;
+define behavior for ZALM_LB_I_Book alias Book
+persistent table zalm_lb_book
+draft table zalm_lb_d_book
+lock master total etag LastChangedAt
+etag master LocalLastChangedAt
+authorization master ( global, instance )
+{
+
+  create;
+  update( features : instance );
+  delete( features: instance );
+  association _Loan { create; with draft; }
+  association _Review { create; with draft; }
+
+
+  field ( numbering : managed, readonly ) BookUuid;
+  field ( readonly ) AvailCopies, AvgRating;
+  field ( readonly ) CreatedBy, CreatedAt, LocalLastChangedBy, LocalLastChangedAt, LastChangedAt;
+
+  draft action Edit;
+  draft action Resume;
+  draft action Activate optimized;
+  draft action Discard;
+  draft determine action Prepare
+  {
+    validation Loan~validateDates;
+    validation Loan~validateMember;
+    validation Loan~validateAvailability;
+    validation Review~validateRating; }
+
+  determination determineBookId on modify { create; }
+  determination calculateAvailCopies on modify {  create; field TotalCopies; }
+
+  side effects { field TotalCopies affects field AvailCopies; action lendBook affects entity _Loan, field AvailCopies;}
+
+  action (  features : instance, authorization : update ) lendBook parameter ZALM_LB_A_LendParam result [1] $self;
+  factory action ( features : instance, authorization : update ) duplicateBook  [1];
+  static function getLibraryKpis result [1] ZALM_LB_A_LibraryKpis;
+
+  mapping for zalm_lb_book
+    {
+      BookUuid           = book_uuid;
+      BookId             = book_id;
+      Isbn               = isbn;
+      Title              = title;
+      Author             = author;
+      Category           = category;
+      PublishYear        = publish_year;
+      PageCount          = page_count;
+      Price              = price;
+      CurrencyCode       = currency_code;
+      TotalCopies        = total_copies;
+      AvailCopies        = avail_copies;
+      AvgRating          = avg_rating;
+      CoverUrl           = cover_url;
+      SamplePdf          = sample_pdf;
+      SampleMime         = sample_mime;
+      SampleFilename     = sample_filename;
+      IsArchived         = is_archived;
+      CreatedBy          = created_by;
+      CreatedAt          = created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+
+}
+
+define behavior for ZALM_LB_I_LOAN alias Loan
+persistent table zalm_lb_loan
+draft table zalm_lb_d_loan
+lock dependent by _Book
+authorization dependent by _Book
+etag master LocalLastChangedAt
+{
+  update ( features: instance );
+  delete ( features: instance );
+  field ( readonly ) BookUuid;
+  association _Book { with draft; }
+  field ( numbering : managed, readonly ) LoanUuid;
+  field ( readonly ) LocalLastChangedAt;
+
+  determination setInitialLoanData on modify { create; }
+  determination calculateAvailCopies on modify { field StatusId; create; delete; }
+
+  validation validateDates on save { field LoanDate, DueDate, ReturnDate; create; }
+  validation validateMember on save { field MemberId; create; }
+  validation validateAvailability on save { create; }
+
+  side effects
+  { field StatusId affects entity _Book; $self affects entity _Book;
+    action returnBook affects entity _Book, $self;
+    action extendLoan affects $self; }
+
+
+  action ( features: instance, authorization : update ) returnBook result [1] $self;
+  action ( features: instance, authorization : update ) extendLoan parameter ZALM_LB_A_ExtendParam
+    result [1] $self;
+
+  mapping for zalm_lb_loan
+    {
+      LoanUuid           = loan_uuid;
+      BookUuid           = book_uuid;
+      LoanNo             = loan_no;
+      MemberId           = member_id;
+      LoanDate           = loan_date;
+      DueDate            = due_date;
+      ReturnDate         = return_date;
+      StatusId           = status_id;
+      ExtensionCount     = extension_count;
+      Note               = note;
+      LocalLastChangedAt = local_last_changed_at;
+    }
+
+}
+
+define behavior for ZALM_LB_I_REVIEW alias Review
+persistent table zalm_lb_review
+draft table zalm_lb_d_review
+lock dependent by _Book
+authorization dependent by _Book
+
+etag master LocalLastChangedAt
+{
+  update;
+  delete;
+  field ( readonly ) BookUuid;
+  association _Book { with draft; }
+  field ( numbering : managed, readonly ) ReviewUuid;
+  field ( readonly ) LocalLastChangedAt;
+
+  determination setInitialReviewData on modify { create; }
+  determination calculateAvgRating on modify { field Rating; create; delete; }
+  validation validateRating on save { field Rating; create; }
+
+  side effects { field Rating affects field _Book.AvgRating; $self affects field _Book.AvgRating; }
+
+  mapping for zalm_lb_review
+    {
+      ReviewUuid         = review_uuid;
+      BookUuid           = book_uuid;
+      MemberId           = member_id;
+      Rating             = rating;
+      Headline           = headline;
+      CommentText        = comment_text;
+      ReviewDate         = review_date;
+      LocalLastChangedAt = local_last_changed_at;
+    }
+}

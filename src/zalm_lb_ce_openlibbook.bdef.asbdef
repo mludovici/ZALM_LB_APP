@@ -1,0 +1,12 @@
+unmanaged implementation in class zbp_alm_lb_ce_openlibbook unique;
+strict ( 2 ); //Uncomment this line in order to enable strict mode 2. The strict mode has two variants (strict(1), strict(2)) and is prerequisite to be future proof regarding syntax and to be able to release your BO.
+
+define behavior for ZALM_LB_CE_OpenLibBook //alias <alias_name>
+//late numbering
+lock master
+authorization master ( global )
+//etag master <field_name>
+{
+    field (readonly) OpenLibKey;
+    action importFromOpenLib result [1] $self;
+}

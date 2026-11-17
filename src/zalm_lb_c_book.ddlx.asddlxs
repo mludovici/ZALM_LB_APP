@@ -1,0 +1,145 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Buch',
+    typeNamePlural: 'Bücher',
+    title: { type: #STANDARD, value: 'Title' },
+    description: { value: 'Author' },
+    imageUrl: 'CoverUrl'
+  },
+  presentationVariant: [{
+    sortOrder: [{ by: 'BookId', direction: #ASC }],
+    visualizations: [{ type: #AS_LINEITEM }]
+  }]
+}
+annotate entity ZALM_LB_C_Book with
+{
+  /* --- FACETTEN (Layout der Object Page) --- */
+  @UI.facet: [
+    {
+      id: 'GeneralInfo',
+      type: #COLLECTION,
+      label: 'Buchdetails',
+      position: 10
+    },
+    {
+      id: 'BasicData',
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Stammdaten & Bestand',
+      parentId: 'GeneralInfo',
+      position: 10
+    },
+    {
+      id: 'SampleData',
+      type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'SampleGroup',
+      label: 'Leseprobe (PDF)',
+      parentId: 'GeneralInfo',
+      position: 20
+    },
+    {
+      id: 'Loans',
+      type: #LINEITEM_REFERENCE,
+      label: 'Ausleihen',
+      position: 20,
+      targetElement: '_Loan'
+    },
+    {
+      id: 'Reviews',
+      type: #LINEITEM_REFERENCE,
+      label: 'Rezensionen',
+      position: 30,
+      targetElement: '_Review'
+    }
+  ]
+
+  /* --- FELDER --- */
+  @UI.hidden: true
+  BookUuid;
+
+  @UI.lineItem: [{ position: 10, importance: #HIGH, label: 'Cover' }]
+  @UI.identification: [{ position: 10 }]
+  CoverUrl;
+
+  @UI.lineItem: [{ position: 20 },
+  { type: #FOR_ACTION, dataAction: 'lendBook', position: 10 , label: 'Ausleihen'},
+   { type: #FOR_ACTION, dataAction: 'duplicateBook', position: 20, label: 'Duplizieren' }
+  ]
+  @UI.identification: [{ position: 20 },
+  { type: #FOR_ACTION, dataAction: 'lendBook', position: 10, label: 'Ausleihen' },
+   { type: #FOR_ACTION, dataAction: 'duplicateBook', position: 20, label: 'Duplizieren' }
+
+  ]
+  BookId;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.identification: [{ position: 30 }]
+  Title;
+
+  @UI.selectionField: [{ position: 10 }]
+  @UI.lineItem: [{ position: 40 }]
+  @UI.identification: [{ position: 40 }]
+  Author;
+
+  @UI.selectionField: [{ position: 20 }]
+  @UI.lineItem: [{ position: 50 }]
+  @UI.identification: [{ position: 50 }]
+  Category;
+
+  @UI.identification: [{ position: 60 }]
+  Isbn;
+
+  @UI.selectionField: [{ position: 30 }]
+  @UI.lineItem: [{ position: 60 }]
+  @UI.identification: [{ position: 70 }]
+  PublishYear;
+
+  @UI.identification: [{ position: 80 }]
+  PageCount;
+
+  @UI.lineItem: [{ position: 70 }]
+  @UI.identification: [{ position: 90 }]
+  Price;
+
+  @UI.hidden: true
+  CurrencyCode;
+
+  @UI.identification: [{ position: 100 }]
+  TotalCopies;
+
+  @UI.lineItem: [{ position: 80 }]
+  @UI.identification: [{ position: 110 }]
+  AvailCopies;
+
+  @UI.lineItem: [{ position: 90 }]
+  @UI.identification: [{ position: 120 }]
+  AvgRating;
+
+  @UI.fieldGroup: [{ qualifier: 'SampleGroup', position: 10, label: 'PDF-Leseprobe' }]
+  SamplePdf;
+
+  @UI.hidden: true
+  SampleMime;
+
+  @UI.hidden: true
+  SampleFilename;
+
+  @UI.lineItem: [{ position: 100, label: 'Archiviert' }]
+  @UI.hidden: false
+  IsArchived;
+
+  @UI.hidden: true
+  CreatedBy;
+
+  @UI.hidden: true
+  CreatedAt;
+
+  @UI.hidden: true
+  LocalLastChangedBy;
+
+  @UI.hidden: true
+  LocalLastChangedAt;
+
+  @UI.hidden: true
+  LastChangedAt;
+}
